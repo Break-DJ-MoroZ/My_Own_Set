@@ -52,7 +52,7 @@ public:
 		{
 			head_ = new Node(key, temp);
 		}
-		else if (temp->key_ != key)
+		else if (key > temp->key_)
 		{
 			while (isUnique)
 			{
@@ -102,43 +102,46 @@ public:
 
 		Node* temp = head_;
 
-		if (temp && (key == temp->key_))
+		if (temp)
 		{
-			head_ = temp->next_;
-			delete temp;
-			isInSet = false;
-		}
-		else if (temp && (key < temp->key_))
-		{
-			std::cout << "There is no this key in the set!\n";
-			isInSet = false;
-		}
-		else if (!temp)
-		{
-			std::cout << "There are not items in the set!\n";
+			if (key < temp->key_)
+			{
+				std::cout << "There is no this key in the set!\n";
+				isInSet = false;
+			}
+			else if (key == temp->key_)
+			{
+				head_ = temp->next_;
+				delete temp;
+				isInSet = false;
+			}
+			else
+			{
+				while (isInSet)
+				{
+					if (!(temp->next_))
+					{
+						std::cout << "There is no this key in the set!\n";
+						isInSet = false;
+					}
+					else if (key == (temp->next_)->key_)
+					{
+						Node* deletThisItem = temp->next_;
+						temp->next_ = (temp->next_)->next_;
+						delete deletThisItem;
+
+						isInSet = false;
+					}
+					else
+					{
+						temp = temp->next_;
+					}
+				}
+			}
 		}
 		else
 		{
-			while (isInSet)
-			{
-				if (!(temp->next_))
-				{
-					std::cout << "There is no this key in the set!\n";
-					isInSet = false;
-				}
-				else if (key == (temp->next_)->key_)
-				{
-					Node* deletThisItem = temp->next_;
-					temp->next_ = (temp->next_)->next_;
-					delete deletThisItem;
-
-					isInSet = false;
-				}
-				else
-				{
-					temp = temp->next_;
-				}
-			}
+			std::cout << "There are not items in the set!\n";
 		}
 	}
 
@@ -156,8 +159,6 @@ private:
 
 	Node* head_;
 };
-
-
 
 int main()
 {
