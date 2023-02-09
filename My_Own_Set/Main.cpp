@@ -8,24 +8,55 @@ public:
 		head_(nullptr)
 	{}
 
-	/*Set(const Set& T)
+	Set(const Set& set):
+		head_(nullptr)
 	{
-		
-	}*/
+		if (this != &set)
+		{
+			Node* temp = set.head_;
+			if (temp)
+			{
+				head_ = new Node(temp->key_);
+				Node* thisTemp = head_;
+				temp = temp->next_;
 
-	Set(Set&& T) noexcept
-	{
-		head_ = T.head_;
-		T.head_ = nullptr;
+				while (temp && thisTemp)
+				{
+					thisTemp->next_ = new Node(temp->key_);
+					thisTemp = thisTemp->next_;
+					temp = temp->next_;
+				}
+			}
+		}
 	}
 
-	const Set& operator= (Set&& T) noexcept
+	Set operator= (const Set& set) noexcept
 	{
-		Node* temp = T.head_;
-		T.head_ = head_;
+		if (this != &set)
+		{
+			Set tempObj(set);
+			Node* tempPtr = tempObj.head_;
+			tempObj.head_ = head_;
+			head_ = tempPtr;
+		}
+
+		return *this;
+	}
+
+	Set(Set&& set) noexcept :
+		head_(nullptr)
+	{
+		head_ = set.head_;
+		set.head_ = nullptr;
+	}
+
+	Set operator= (Set&& set) noexcept
+	{
+		Node* temp = set.head_;
+		set.head_ = head_;
 		head_ = temp;
 
-		return this;
+		return *this;
 	}
 
 	~Set()
@@ -198,6 +229,12 @@ int main()
 	a.deleteKey(-8);
 	a.deleteKey(0);
 
+	Set<int> c = a;
+
+	c.deleteKey(-7);
+	c.deleteKey(1);
+
+	a = Set<int>(c);
 
 	return 0;
 }
