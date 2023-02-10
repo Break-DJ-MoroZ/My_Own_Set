@@ -176,6 +176,91 @@ public:
 		}
 	}
 
+	Set& merge(Set& set)
+	{
+		if (set.head_)
+		{
+			if (!head_)
+			{
+				std::swap(head_, set.head_);
+			}
+			else if (!set.head_->next_)
+			{
+				Node* temp = head_;
+
+				if (set.head_->key_ < temp->key_)
+				{
+					head_ = set.head_;
+					head_->next_ = temp;
+				}
+				else if (temp->next_)
+				{
+					while (set.head_ && temp->next_)
+					{
+						if (set.head_->key_ == (temp->next_)->key_)
+						{
+							set.deleteKey(set.head_->key_);
+						}
+						else if (set.head_->key_ < (temp->next_)->key_)
+						{
+							Node* setTemp = set.head_->next_;
+							set.head_->next_ = temp->next_;
+							temp->next_ = set.head_;
+							set.head_ = setTemp;
+						}
+						temp = temp->next_;
+					}
+					if (!temp->next_)
+					{
+						temp->next_ = set.head_;
+					}
+					set.head_ = nullptr;
+				}
+			}
+			else 
+			{
+				Node* temp = head_;
+
+				if (set.head_->key_ < temp->key_)
+				{
+					Node* tempPtr = set.head_->next_;
+					set.head_->next_ = temp;
+					head_ = set.head_;
+					set.head_ = tempPtr;
+				}
+				else if (set.head_->key_ == temp->key_)
+				{
+					Node* tempPtr = set.head_->next_;
+					delete set.head_;
+					set.head_->next_ = tempPtr;
+				}
+				while (set.head_->next_ && temp->next_)
+				{
+					if ((set.head_->next_)->key_ < temp->key_)
+					{
+						set.head_ = set.head_->next_;
+					}
+					else if ((set.head_->next_)->key_ == temp->key_)
+					{
+						Node* tempPtr = (set.head_->next_)->next_;
+						delete set.head_->next_;
+						set.head_->next_ = tempPtr;
+					}
+					else
+					{
+						temp = temp->next_;
+					}
+				}
+				if (!temp)
+				{
+					temp->next_ = set.head_;
+				}
+			}
+		}
+
+		return *this;
+	}
+
 private:
 
 	struct Node
@@ -235,6 +320,19 @@ int main()
 	c.deleteKey(1);
 
 	a = Set<int>(c);
+
+	a.insert(54);
+	a.insert(-2);
+
+	a.deleteKey(12);
+	a.deleteKey(14);
+
+	c.deleteKey(13);
+
+	//a.insert(-1);
+	//a.insert(19);
+
+	c.merge(a);
 
 	return 0;
 }
