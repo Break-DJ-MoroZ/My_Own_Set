@@ -224,8 +224,8 @@ public:
 				if (set.head_->key_ < temp->key_)
 				{
 					Node* tempPtr = set.head_->next_;
-					set.head_->next_ = temp;
 					head_ = set.head_;
+					set.head_->next_ = temp;
 					set.head_ = tempPtr;
 				}
 				else if (set.head_->key_ == temp->key_)
@@ -234,26 +234,31 @@ public:
 					delete set.head_;
 					set.head_->next_ = tempPtr;
 				}
-				while (set.head_->next_ && temp->next_)
+				while (set.head_ && temp->next_)
 				{
-					if ((set.head_->next_)->key_ < temp->key_)
+					if (set.head_->key_ == temp->key_)
 					{
-						set.head_ = set.head_->next_;
+						Node* tempPtr = set.head_->next_;
+						delete set.head_;
+						set.head_ = tempPtr;
 					}
-					else if ((set.head_->next_)->key_ == temp->key_)
+					else if (set.head_->key_ > (temp->next_)->key_)
 					{
-						Node* tempPtr = (set.head_->next_)->next_;
-						delete set.head_->next_;
-						set.head_->next_ = tempPtr;
+						Node* tempPtr = set.head_->next_;
+						Node* thisPtr = temp->next_;
+						temp->next_ = set.head_;
+						(temp->next_)->next_ = thisPtr;
+						set.head_ = tempPtr;
 					}
 					else
 					{
 						temp = temp->next_;
 					}
 				}
-				if (!temp)
+				if (!temp->next_)
 				{
 					temp->next_ = set.head_;
+					set.head_ = nullptr;
 				}
 			}
 		}
@@ -323,8 +328,10 @@ int main()
 
 	a.insert(54);
 	a.insert(-2);
+	a.insert(-1);
+	a.insert(0);
 
-	a.deleteKey(12);
+	//a.deleteKey(12);
 	a.deleteKey(14);
 
 	c.deleteKey(13);
