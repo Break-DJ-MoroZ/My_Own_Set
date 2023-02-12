@@ -327,6 +327,35 @@ public:
 		return *this;
 	}
 
+	template<class FriendType> 
+	friend Set<FriendType> getIntersection(const Set<FriendType>& first, const Set<FriendType>& second)
+	{
+		Set<Type> newSet;
+
+		Node* firstTemp = first.head_;
+		Node* secondTemp = second.head_;
+
+		while (firstTemp && secondTemp)
+		{
+			if (firstTemp->key_ > secondTemp->key_)
+			{
+				secondTemp = secondTemp->next_;
+			}
+			else if (firstTemp->key_ < secondTemp->key_)
+			{
+				firstTemp = firstTemp->next_;
+			}
+			else
+			{
+				newSet.insert(firstTemp->key_);
+				secondTemp = secondTemp->next_;
+				firstTemp = firstTemp->next_;
+			}
+		}
+
+		return newSet;
+	}
+
 private:
 
 	struct Node
@@ -341,6 +370,8 @@ private:
 
 	Node* head_;
 };
+
+
 
 int main()
 {
@@ -386,6 +417,10 @@ int main()
 	c.deleteKey(100);
 
 	b.substract(c);
+
+	c.insert(100);
+
+	Set<int> d = getIntersection(b, c);
 
 
 	return 0;
