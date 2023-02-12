@@ -199,7 +199,8 @@ public:
 					{
 						if (set.head_->key_ == (temp->next_)->key_)
 						{
-							set.deleteKey(set.head_->key_);
+							delete set.head_;
+							set.head_ = nullptr;
 						}
 						else if (set.head_->key_ < (temp->next_)->key_)
 						{
@@ -275,6 +276,57 @@ public:
 		return *this;
 	}
 
+	Set& substract(const Set& set)
+	{
+		if (head_ && set.head_)
+		{
+			Node* temp = head_;
+			Node* setTemp = set.head_;
+
+			if (!(temp->next_ && setTemp->next_) && (head_->key_ == set.head_->key_))
+			{
+				delete head_;
+			}
+			else 
+			{
+				while (temp && setTemp && (setTemp->key_ <= temp->key_))
+				{
+					if (setTemp->key_ < temp->key_)
+					{
+						setTemp = setTemp->next_;
+					}
+					else
+					{
+						head_ = temp->next_;
+						delete temp;
+						temp = head_;
+						setTemp = setTemp->next_;
+					}
+				}
+
+				while (temp->next_ && setTemp)
+				{
+					if (setTemp->key_ < (temp->next_)->key_)
+					{
+						setTemp = setTemp->next_;
+					}
+					else if (setTemp->key_ > (temp->next_)->key_)
+					{
+						temp = temp->next_;
+					}
+					else
+					{
+						Node* deletedTemp = temp->next_;
+						temp->next_ = (temp->next_)->next_;
+						delete deletedTemp;
+					}
+				}
+			}
+		}
+
+		return *this;
+	}
+
 private:
 
 	struct Node
@@ -318,10 +370,23 @@ int main()
 
 	c.merge(a);
 
+	b.insert(-10);
 	b.insert(3);
 	b.insert(5);
+	b.insert(8);
+	b.insert(19);
+	b.insert(20);
+	b.insert(21);
+	b.insert(100);
 
 	b.merge(c);
+
+	c = b;
+
+	c.deleteKey(100);
+
+	b.substract(c);
+
 
 	return 0;
 }
