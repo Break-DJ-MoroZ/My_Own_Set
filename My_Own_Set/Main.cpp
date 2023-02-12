@@ -214,48 +214,57 @@ public:
 					{
 						temp->next_ = set.head_;
 					}
-					set.head_ = nullptr;
 				}
+				set.head_ = nullptr;
 			}
 			else 
 			{
 				Node* temp = head_;
+				Node* setTemp = set.head_;
 
-				if (set.head_->key_ < temp->key_)
+				if (set.head_->key_ < head_->key_)
 				{
-					Node* tempPtr = set.head_->next_;
-					head_ = set.head_;
-					set.head_->next_ = temp;
-					set.head_ = tempPtr;
-				}
-				else if (set.head_->key_ == temp->key_)
-				{
-					Node* tempPtr = set.head_->next_;
-					delete set.head_;
-					set.head_->next_ = tempPtr;
-				}
-				while (set.head_ && temp->next_)
-				{
-					if (set.head_->key_ == temp->key_)
+					while ((setTemp->next_)->key_ < temp->key_)
 					{
-						Node* tempPtr = set.head_->next_;
-						delete set.head_;
-						set.head_ = tempPtr;
+						setTemp = setTemp->next_;
 					}
-					else if (set.head_->key_ > (temp->next_)->key_)
+					head_ = set.head_;
+					set.head_ = setTemp->next_;
+					setTemp->next_ = temp;
+				}
+				setTemp = set.head_;
+
+				if (temp->key_ == setTemp->key_)
+				{
+					set.head_ = setTemp->next_;
+					delete setTemp;
+					setTemp = set.head_;
+				}
+
+				while (temp->next_ && setTemp)
+				{
+					if (setTemp->key_ < (temp->next_)->key_)
 					{
-						Node* tempPtr = set.head_->next_;
-						Node* thisPtr = temp->next_;
-						temp->next_ = set.head_;
-						(temp->next_)->next_ = thisPtr;
-						set.head_ = tempPtr;
+						set.head_ = setTemp->next_;
+						setTemp->next_ = temp->next_;
+						temp->next_ = setTemp;
+						setTemp = set.head_;
+						temp = temp->next_;
+					}
+					else if (setTemp->key_ == (temp->next_)->key_)
+					{
+						set.head_ = setTemp->next_;
+						delete setTemp;
+						setTemp = set.head_;
 					}
 					else
 					{
 						temp = temp->next_;
 					}
 				}
-				if (!temp->next_)
+				setTemp = set.head_;
+
+				if (!temp->next_ && setTemp)
 				{
 					temp->next_ = set.head_;
 					set.head_ = nullptr;
@@ -284,62 +293,35 @@ private:
 int main()
 {
 	Set<int> a;
+	Set<int> b;
+	Set<int> c;
 
-	bool b = a.search(-12);
 	a.insert(0);
-	a.insert(-10);
-	a.insert(1);
-	a.insert(-7);
-	a.insert(-8);
-	a.insert(13);
-	a.insert(13);
-	a.insert(14);
-	a.insert(-10);
-	a.insert(-8);
-	a.insert(28);
-	a.insert(12);
-	a.insert(0);
-	a.insert(12);
+	a.insert(3);
+	a.insert(6);
+	a.insert(20);
 
-	b = a.search(-10);
-	b = a.search(0);
-	b = a.search(-11);
-	b = a.search(0);
-	b = a.search(12);
-	b = a.search(-98);
-	b = a.search(128);
-	b = a.search(28);
-	b = a.search(-17);
+	c.insert(-10);
+	c.insert(-9);
+	c.insert(-8);
+	c.insert(-7);
+	c.insert(-6);
 
-	a.deleteKey(-8);
-	a.deleteKey(-12);
-	a.deleteKey(29);
-	a.deleteKey(-10);
-	a.deleteKey(28);
-	a.deleteKey(-8);
-	a.deleteKey(0);
-
-	Set<int> c = a;
-
-	c.deleteKey(-7);
-	c.deleteKey(1);
-
-	a = Set<int>(c);
-
-	a.insert(54);
-	a.insert(-2);
-	a.insert(-1);
-	a.insert(0);
-
-	//a.deleteKey(12);
-	a.deleteKey(14);
-
-	c.deleteKey(13);
-
-	//a.insert(-1);
-	//a.insert(19);
+	c.insert(1);
+	c.insert(2);
+	c.insert(5);
+	c.insert(6);
+	c.insert(7);
+	c.insert(19);
+	c.insert(20);
+	c.insert(21);
 
 	c.merge(a);
+
+	b.insert(3);
+	b.insert(5);
+
+	b.merge(c);
 
 	return 0;
 }
